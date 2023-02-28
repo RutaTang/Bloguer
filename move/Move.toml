@@ -1,0 +1,9 @@
+[package]
+name = 'bloguer'
+version = '1.0.0'
+[dependencies.AptosFramework]
+git = 'https://github.com/aptos-labs/aptos-core.git'
+rev = 'main'
+subdir = 'aptos-move/framework/aptos-framework'
+[addresses]
+bloguer_address = '0xab78dfcc4242ece1f760436a1606cfb4586694d2e28e4226edd510bbbc375cd3'
