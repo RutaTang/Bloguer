@@ -1,7 +1,14 @@
 import { Twitter, Github, Linkedin } from 'lucide-react'
+import { useContext, } from 'react';
 import { useNavigate } from "react-router-dom";
+import { DataContext } from '../contexts/DataContex';
+import { PostType } from '../types';
+import { timeStampToLocalDateString } from '../utils';
+
+
 const Home = () => {
     const navigate = useNavigate();
+    const { posts } = useContext(DataContext);
     return (
         <div>
             {/* Author information */}
@@ -30,18 +37,39 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-            {/* Article List */}
             <div className="flex-col justify-center px-20 mt-16 space-y-16">
                 {/* Article Item */}
-                <div>
-                    <h1 onClick={() => {
-                        // navigate("/post:id")
-                        navigate("/post/1")
-                    }} className="cursor-pointer text-2xl font-semibold dark:text-fuchsia-300 text-fuchsia-500  whitespace-nowrap overflow-hidden" style={{ textOverflow: "ellipsis" }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</h1>
-                    <p className="text-base dark:text-slate-100 my-3 opacity-70 font-semibold">By Ruta Tang</p>
-                    <p className="text-sm dark:text-slate-100 opacity-70">Pub At June 20, 2020 • Upd At July 21, 2020 • 12 min</p>
-                    <p className="text-base dark:text-slate-100 mt-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Sollicitudin nibh sit amet commodo nulla facilisi nullam vehicula ipsum. Sagittis nisl rhoncus mattis rhoncus urna neque viverra justo. Tellus orci ac auctor augue mauris augue. Habitant morbi tristique senectus et netus et malesuada fames. Est velit egestas dui id. Tempor nec feugiat nisl pretium. Tortor at risus viverra adipiscing at in.</p>
-                </div>
+                {
+                    posts
+                        ?
+                        posts.length === 0 ?
+                            <p className='text-center font-bold dark:text-slate-300'>🚴‍♂️ The first article is on the way...</p>
+                            :
+                            posts.sort((a, b) => {
+                                return parseInt(b.publish_date) - parseInt(a.publish_date);
+                            }).map((post: PostType) => {
+                                return (
+                                    <div key={post.uuid}>
+                                        <h1 onClick={() => {
+                                            navigate(`/post/${post.uuid}`)
+                                        }} className="cursor-pointer text-2xl font-semibold dark:text-fuchsia-300 text-fuchsia-500  whitespace-nowrap overflow-hidden" style={{ textOverflow: "ellipsis" }}>{
+                                                !post.title ? "No title" : post.title
+                                            }</h1>
+                                        <p className="text-base dark:text-slate-100 my-3 opacity-70 font-semibold">By Ruta Tang</p>
+                                        <p className="text-sm dark:text-slate-100 opacity-70">
+                                            Pub At {timeStampToLocalDateString(parseInt(post.publish_date))} • Upd At {timeStampToLocalDateString(parseInt(post.update_date))} • {post.read_duration} min
+                                        </p>
+                                        <p className="text-base dark:text-slate-100 mt-3">{
+                                            !post.description ? "No description" : post.description
+                                        }</p>
+                                    </div>
+                                )
+                            })
+                        :
+                        <p className='text-center text-2xl animate-pulse dark:text-slate-300 opacity-70'>
+                            LOADING...
+                        </p>
+                }
             </div>
         </div>
     )

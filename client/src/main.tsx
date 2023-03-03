@@ -11,8 +11,8 @@ import Home from './pages/Home';
 import { AptosWalletAdapterProvider } from '@aptos-labs/wallet-adapter-react';
 import { PetraWallet } from 'petra-plugin-wallet-adapter';
 import React from 'react';
-import Editor from './components/Editor';
 import Write from './pages/Write';
+import { DataContextProvider } from './contexts/DataContex';
 
 const wallets = [new PetraWallet()];
 
@@ -27,7 +27,7 @@ const router = createHashRouter([
                 element: <Home />,
             },
             {
-                path: "post/:id",
+                path: "post/:uuid",
                 element: <Post />,
             },
             {
@@ -38,10 +38,14 @@ const router = createHashRouter([
     },
 ]);
 
+
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
-            <RouterProvider router={router} />
+            <DataContextProvider>
+                <RouterProvider router={router} />
+            </DataContextProvider>
         </AptosWalletAdapterProvider>
     </React.StrictMode>
 )
