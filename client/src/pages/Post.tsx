@@ -1,26 +1,38 @@
 import { useParams } from "react-router-dom"
-import {  Send } from "lucide-react";
-import {  useEffect, useState } from "react";
+import { Coffee, HardHat, Send } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { micromark } from "micromark";
+import * as jdenticon from "jdenticon";
 
 import { PostType } from "../types";
 import { timeStampToLocalDateString } from "../utils";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
-import { AptosClient } from "aptos";
+import { AptosAccount, AptosClient, CoinClient } from "aptos";
 import { commentOnAPostPayload } from "../apis/comment";
 import { fetchPostByUUID } from "../apis/post";
 
 import hljs from 'highlight.js'
 import "highlight.js/styles/base16/nord.css";
 
+
+import { Tooltip } from 'react-tooltip'
+import 'react-tooltip/dist/react-tooltip.css'
+
 const MarkdownView = ({ content }: { content: string }) => {
+    const html = micromark(content)
     useEffect(() => {
         hljs.highlightAll()
     }, [content])
     return (
-        <div dangerouslySetInnerHTML={{ __html: micromark(content) }}></div>
+        <div dangerouslySetInnerHTML={{ __html: html }}></div>
     )
 }
+
+const COFFEE_PRICE = [
+    1,
+    0.5,
+    0.1
+]
 
 const Post = () => {
     const { uuid } = useParams()
@@ -28,6 +40,7 @@ const Post = () => {
     const [post, setPost] = useState<PostType>()
     const [comment, setComment] = useState("")
     const [refreshCount, setRefreshCount] = useState(0)
+    const [coffeePriceIndex, setCoffeePriceIndex] = useState(2)
 
     useEffect(() => {
         if (!uuid) return
@@ -35,6 +48,34 @@ const Post = () => {
             setPost(post[0] as PostType)
         })
     }, [uuid, refreshCount])
+
+    //@param apt: amount of apt to transfer, e.g. 1 is 1 APT
+    const transferToAuthor = async (apt: number) => {
+        if (!account) return
+        const moduleAddress = import.meta.env.VITE_APTOS_MODULE_ADDRESS
+        if (!moduleAddress) {
+            console.error("Author account does not exist")
+            return
+        }
+        const client = new AptosClient(import.meta.env.VITE_APTOS_NODE_URL)
+        const payload = {
+            type: "entry_function_payload",
+            function: `${moduleAddress}::bloguer::buy_me_a_coffee`,
+            type_arguments: [],
+            arguments: [
+                uuid,
+                (apt * 10e7).toString(),
+                Date.now().toString()
+            ]
+        }
+        try {
+            const response = await signAndSubmitTransaction(payload)
+            await client.waitForTransaction(response.hash)
+            setRefreshCount(refreshCount + 1)
+        } catch (e) {
+            console.error(e)
+        }
+    }
 
     const submitComment = async () => {
         if (!account) return
@@ -74,9 +115,54 @@ const Post = () => {
                 <div className="max-w-none mt-8 prose dark:prose-invert prose-pre:p-0">
                     <MarkdownView content={post.content} />
                 </div>
+                <hr className="mt-20" />
+                {/* Buy me a coffee */}
+                <div className="mt-3">
+                    <h1 className="text-3xl font-bold italic dark:text-slate-300">Buy Me a Coffee</h1>
+                    {/* Sponsors Wall */}
+                    <div className="flex flex-wrap items-center justify-start space-x-5 mt-5">
+                        {
+                            post.sponsors && post.sponsors.length > 0 ?
+                                post.sponsors.sort((a,b)=>{
+                                    return parseInt(b.count) - parseInt(a.count)
+                                }).map((sponsor) => {
+                                    return (
+                                        <div data-tooltip-id={`tooltip-show-address-${sponsor.address}`} data-tooltip-content={sponsor.address}  >
+                                            <Tooltip id={`tooltip-show-address-${sponsor.address}`} />
+                                            <div dangerouslySetInnerHTML={{ __html: jdenticon.toSvg(sponsor.address, 30) }}></div>
+                                        </div>
+                                    )
+                                })
+                                :
+                                <p className="font-bold opacity-80 italic">Be the first sponsor!</p>
+                        }
+                    </div>
+                    {/* Choose Price and Buy me a coffee button */}
+                    <div className="flex items-center justify-between mt-2">
+                        {/* Choose Price */}
+                        <div className="flex items-center space-x-5">
+                            {
+                                COFFEE_PRICE.map((price, index) => {
+                                    return (
+                                        <div key={price} className={`cursor-pointer select-none rounded-lg px-3 py-2 text-base font-bold text-white transition ${coffeePriceIndex === index ? "bg-black scale-110 dark:bg-white dark:text-black" : "bg-gray-500"}`} onClick={() => {
+                                            setCoffeePriceIndex(index)
+                                        }}>
+                                            {price} APT
+                                        </div>
+                                    )
+
+                                })
+                            }
+                        </div>
+                        {/* Buy me a coffee button */}
+                        <div className="rounded px-10 py-3 cursor-pointer" onClick={() => { transferToAuthor(COFFEE_PRICE[coffeePriceIndex]) }}>
+                            <img src={"bmc-button.svg"} className="w-40" />
+                        </div>
+                    </div>
+                </div>
+                <hr className="mt-5" />
                 {/* Comment */}
-                <div className="w-full mt-20">
-                    <hr className="mb-5" />
+                <div className="w-full mt-10">
                     <h1 className="text-3xl font-bold italic dark:text-slate-300">Comments</h1>
                     {/* Comment List */}
                     <div className="mt-5 space-y-5">
@@ -109,7 +195,7 @@ const Post = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         )
         :
         (

@@ -9,6 +9,7 @@ interface PostType {
     update_date: string,
     read_duration: string,
     comments: Array<PostCommentType>
+    sponsors: Array<PostSponsorType>
 }
 
 interface PostCommentType {
@@ -16,6 +17,12 @@ interface PostCommentType {
     commentor: string,
     comment_date: string,
     content: string,
+}
+
+interface PostSponsorType {
+    address: string,
+    date: string,
+    count: string,
 }
 
 export type { PostType }

@@ -4,8 +4,13 @@ module bloguer_address::bloguer{
     use std::signer;
     use aptos_std::vector;
     use std::string;
+    use aptos_framework::aptos_account::transfer;
     #[test_only]
     use aptos_framework::account;
+    #[test_only]
+    use aptos_framework::coin;
+    #[test_only]
+    use aptos_framework::aptos_coin::AptosCoin;
 
 
     struct PostStore has key {
@@ -21,6 +26,7 @@ module bloguer_address::bloguer{
         update_date: u64, //timestamp
         read_duration: u64, // by minute
         comments: vector<Comment>,
+        sponsors: vector<Sponsor>, 
     }
 
     struct Comment has store, drop, copy {
@@ -28,6 +34,12 @@ module bloguer_address::bloguer{
         commentor: address,
         comment_date: u64, //timestamp
         content: String,
+    }
+
+    struct Sponsor has store, drop, copy {
+        address: address,
+        date: u64, //timestamp
+        count: u64, 
     }
 
     fun init_module(account: &signer) {
@@ -99,6 +111,7 @@ module bloguer_address::bloguer{
                 update_date: post.update_date,
                 read_duration: post.read_duration,
                 comments: vector::empty<Comment>(),
+                sponsors: vector::empty<Sponsor>(),
             };
             vector::push_back(&mut posts, post);
             index = index + 1;
@@ -120,6 +133,7 @@ module bloguer_address::bloguer{
             update_date: publish_date,
             read_duration: read_duration,
             comments: vector::empty<Comment>(),
+            sponsors: vector::empty<Sponsor>(),
         };
         vector::push_back(&mut post_store.posts, post);
     }
@@ -200,6 +214,36 @@ module bloguer_address::bloguer{
             content: content,
         };
         vector::push_back(&mut post.comments, comment);
+    }
+
+    public entry fun buy_me_a_coffee(account: &signer, post_uuid: String, sponser_count: u64, sponsor_date: u64) acquires PostStore {
+        //get address of the account
+        let signer_address = signer::address_of(account); 
+        //get the post store
+        let post_store = borrow_global_mut<PostStore>(@bloguer_address);
+        //find the post index
+        let len = vector::length(&post_store.posts);
+        //assert if posts is empty
+        assert!(len > 0, 0);
+        //find the post index
+        let index = 0; 
+        while (index < len) {
+            let post = vector::borrow(&post_store.posts, index);
+            if (post.uuid == post_uuid)  break;
+            index = index + 1;
+        };
+        //assert if post not found
+        assert!(index < len, 0);
+        //transfer the coin to @bloguer_address
+        transfer(account, @bloguer_address, sponser_count); 
+        //push to sponsors vec
+        let post = vector::borrow_mut(&mut post_store.posts, index);
+        let sponsor = Sponsor {
+            address: signer_address,
+            date: sponsor_date,
+            count: sponser_count,
+        };
+        vector::push_back(&mut post.sponsors, sponsor);
     }
 
 
@@ -301,5 +345,38 @@ module bloguer_address::bloguer{
         let posts_list = get_posts_list_by_start_and_end_index(signer::address_of(&admin), 4, 5);
         //check if posts list is returned
         assert!(vector::length(&posts_list) == 1, 0);
+    }
+
+    #[test(admin=@0x123,module_account=@bloguer_address, core=@0x1)]
+    public fun test_buy_me_a_coffee(admin: signer,module_account:signer,core:signer) acquires PostStore  {
+
+        //initialize the coin, core must be @0x1
+        let (burn_cap, mint_cap) = aptos_framework::aptos_coin::initialize_for_test(&core);
+
+        // create account and register coin
+        account::create_account_for_test(signer::address_of(&admin));
+        coin::register<AptosCoin>(&admin);
+        account::create_account_for_test(signer::address_of(&module_account));
+        coin::register<AptosCoin>(&module_account);
+
+        // mint coin
+        coin::deposit(signer::address_of(&admin), coin::mint(100000000, &mint_cap));
+
+        //initialize the module
+        init_module(&module_account);
+        create_post(&module_account, string::utf8(b"1"), string::utf8(b"title"), string::utf8(b"description"), string::utf8(b"content"), 123456789, 10);
+        buy_me_a_coffee(&admin, string::utf8(b"1"), 10, 123456789);
+
+        // check if post's sponsors is updated
+        let post_store = borrow_global<PostStore>(signer::address_of(&module_account));
+        let post = vector::borrow(&post_store.posts, 0);
+        assert!(vector::length(&post.sponsors) == 1, 0);
+
+        // check if moduel_account has 10
+        assert!(coin::balance<AptosCoin>(signer::address_of(&module_account)) == 10, 0);
+
+        //destroy the coin caps
+        coin::destroy_burn_cap(burn_cap);
+        coin::destroy_mint_cap(mint_cap);
     }
 }
