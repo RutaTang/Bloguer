@@ -134,7 +134,7 @@ const Post = () => {
                                     )
                                 })
                                 :
-                                <p className="font-bold opacity-80 italic">Be the first sponsor!</p>
+                                <p className="font-bold opacity-80 italic dark:text-slate-300">Be the first sponsor!</p>
                         }
                     </div>
                     {/* Choose Price and Buy me a coffee button */}
