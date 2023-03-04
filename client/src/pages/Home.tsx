@@ -1,4 +1,4 @@
-import { Twitter, Github, Linkedin } from 'lucide-react'
+import { Twitter, Github, Linkedin, Mail, Youtube } from 'lucide-react'
 import { useContext, } from 'react';
 import { useNavigate } from "react-router-dom";
 import { DataContext } from '../contexts/DataContex';
@@ -9,30 +9,72 @@ import { timeStampToLocalDateString } from '../utils';
 const Home = () => {
     const navigate = useNavigate();
     const { posts } = useContext(DataContext);
+
+    const author = {
+        name: import.meta.env.VITE_AUTHOR_NAME || "Unknown",
+        introduction: import.meta.env.VITE_AUTHOR_INTRODUCTION || "The author has no introduction yet",
+        avatar: import.meta.env.VITE_AUTHOR_AVATAR,
+        email: import.meta.env.VITE_AUTHOR_EMAIL,
+        github: import.meta.env.VITE_AUTHOR_GITHUB,
+        twitter: import.meta.env.VITE_AUTHOR_TWITTER,
+        linkedin: import.meta.env.VITE_AUTHOR_LINKEDIN,
+        youtube: import.meta.env.VITE_AUTHOR_YOUTUBE,
+    }
     return (
         <div>
             {/* Author information */}
             <div className="flex mt-10">
                 <div className="shrink-0">
-                    <img src="https://avatars.githubusercontent.com/u/24973657" alt="" className="rounded-full w-20 h-20" />
+                    <img src={author.avatar} alt="" className="rounded-full w-20 h-20" />
                 </div>
                 <div className="ml-6 space-y-3">
-                    <h1 className="text-xl font-bold dark:text-slate-100">Ruta Tang</h1>
-                    <p className="text-sm dark:text-slate-100">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <h1 className="text-xl font-bold dark:text-slate-100">{author.name}</h1>
+                    <p className="text-sm dark:text-slate-100">{author.introduction}</p>
                     <div className="text-base dark:text-slate-100 flex">
                         <p className="shrink-0">
                             Contact me by
                         </p>
                         <div className="flex flex-wrap space-x-3 ml-3 items-center">
-                            <div>
-                                <a href="" className=""><Twitter /></a>
-                            </div>
-                            <div>
-                                <a href="" className=""><Github /></a>
-                            </div>
-                            <div>
-                                <a href="" className=""><Linkedin /></a>
-                            </div>
+                            {/* Email */}
+                            {
+                                author.email && (
+                                    <div>
+                                        <a href={author.email} target="_blank"><Mail /></a>
+                                    </div>
+                                )
+                            }
+                            {/* GITHUB */}
+                            {
+                                author.github && (
+                                    <div>
+                                        <a href={author.github} target="_blank"><Github /></a>
+                                    </div>
+                                )
+                            }
+                            {/* TWITTER */}
+                            {
+                                author.twitter && (
+                                    <div>
+                                        <a href={author.twitter} target="_blank"><Twitter /></a>
+                                    </div>
+                                )
+                            }
+                            {/* LINKEDIN */}
+                            {
+                                author.linkedin && (
+                                    <div>
+                                        <a href={author.linkedin} target="_blank"><Linkedin /></a>
+                                    </div>
+                                )
+                            }
+                            {/* YOUTUBE */}
+                            {
+                                author.youtube && (
+                                    <div>
+                                        <a href={author.youtube} target="_blank"><Youtube /></a>
+                                    </div>
+                                )
+                            }
                         </div>
                     </div>
                 </div>

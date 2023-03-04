@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { fetchPosts, fetchPostsLength, fetchPostsListByStartAndEndIndex } from "../apis/post";
+import { fetchPostsLength, fetchPostsListByStartAndEndIndex } from "../apis/post";
 import { PostType } from "../types";
 
 const defaultContext: {

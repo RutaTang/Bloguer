@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom"
-import { Pizza, Puzzle, Send } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import {  Send } from "lucide-react";
+import {  useEffect, useState } from "react";
 import { micromark } from "micromark";
 
 import { PostType } from "../types";

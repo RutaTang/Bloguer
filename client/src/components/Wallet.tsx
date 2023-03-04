@@ -1,6 +1,6 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { AptosWalletName } from '@manahippo/aptos-wallet-adapter'
-import { Cross, X, Check } from "lucide-react";
+import { X, Check } from "lucide-react";
 import { useState } from "react";
 
 const Wallet = () => {

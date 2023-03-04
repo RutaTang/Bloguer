@@ -1,6 +1,6 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { AptosClient } from 'aptos'
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { createPostPayload } from "../apis/post";
 import { DataContext } from '../contexts/DataContex';
