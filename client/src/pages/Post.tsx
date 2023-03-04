@@ -115,9 +115,9 @@ const Post = () => {
                 <div className="max-w-none mt-8 prose dark:prose-invert prose-pre:p-0">
                     <MarkdownView content={post.content} />
                 </div>
-                <hr className="mt-20" />
+                <hr className="mt-10" />
                 {/* Buy me a coffee */}
-                <div className="mt-3">
+                <div className="mt-10">
                     <h1 className="text-3xl font-bold italic dark:text-slate-300">Buy Me a Coffee</h1>
                     {/* Sponsors Wall */}
                     <div className="flex flex-wrap items-center justify-start space-x-5 mt-5">
