@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom"
 import { Coffee, HardHat, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { micromark } from "micromark";
 import * as jdenticon from "jdenticon";
 
 import { PostType } from "../types";
@@ -11,22 +10,11 @@ import { AptosAccount, AptosClient, CoinClient } from "aptos";
 import { commentOnAPostPayload } from "../apis/comment";
 import { fetchPostByUUID } from "../apis/post";
 
-import hljs from 'highlight.js'
-import "highlight.js/styles/base16/nord.css";
-
 
 import { Tooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css'
+import MarkdownView from "../components/MarkdownView";
 
-const MarkdownView = ({ content }: { content: string }) => {
-    const html = micromark(content)
-    useEffect(() => {
-        hljs.highlightAll()
-    }, [content])
-    return (
-        <div dangerouslySetInnerHTML={{ __html: html }}></div>
-    )
-}
 
 const COFFEE_PRICE = [
     1,

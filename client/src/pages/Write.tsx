@@ -1,8 +1,9 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { AptosClient } from 'aptos'
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { createPostPayload } from "../apis/post";
+import MarkdownView from '../components/MarkdownView';
 import { DataContext } from '../contexts/DataContex';
 
 const Write = () => {
@@ -11,6 +12,7 @@ const Write = () => {
     const [description, setDescription] = useState<string>('')
     const [content, setContent] = useState<string>('')
     const [readDuration, setReadDuration] = useState<number>(1)
+    const [isPreview, setIsPreview] = useState<boolean>(false)
     const { refreshPosts } = useContext(DataContext)
     const navigate = useNavigate()
 
@@ -29,6 +31,10 @@ const Write = () => {
         } catch (e) {
             console.error(e)
         }
+    }
+
+    const togglePreview = () => {
+        setIsPreview(!isPreview)
     }
     return (
         <div className="mt-10 flex-col space-y-5">
@@ -53,17 +59,27 @@ const Write = () => {
             <input onChange={(e) => {
                 setDescription(e.target.value)
             }} className="w-full outline-none grow h-12 border-[2px] dark:border-[5px] rounded border-black px-5 py-3 resize-none bg-transparent dark:border-slate-300 dark:text-slate-100" placeholder="Your article description here..." />
-            <p className="dark:text-slate-100 font-bold">Content (markdown)</p>
-            <textarea onChange={(e) => {
+            <div className='flex justify-between items-center'>
+                <p className="dark:text-slate-100 font-bold">Content (markdown)</p>
+                <p className={`select-none cursor-pointer font-bold px-3 py-2 rounded transition border-2 ${isPreview ? "bg-black text-white border-transparent dark:bg-slate-200 dark:text-black" : "border-black dark:text-slate-200 dark:border-slate-200"}`} onClick={() => {
+                    togglePreview()
+                }}>Preview</p>
+            </div>
+            <textarea hidden={isPreview} onChange={(e) => {
                 setContent(e.target.value)
-            }} className="w-full outline-none grow h-96 border-[2px] dark:border-[5px] rounded border-black px-5 py-3 resize-none bg-transparent dark:border-slate-300 dark:text-slate-100" placeholder="Start your article with Markdown!"  >
+            }} suppressHydrationWarning contentEditable={true} className="w-full outline-none grow h-96 border-[2px] dark:border-[5px] rounded border-black px-5 py-3 resize-none bg-transparent dark:border-slate-300 dark:text-slate-100 overflow-scroll">
             </textarea>
+            <div hidden={!isPreview} className="w-full outline-none grow h-full border-[2px] dark:border-[5px] rounded border-black px-5 py-3 resize-none bg-transparent dark:border-slate-300 dark:text-slate-100 overflow-scroll">
+                <div className="max-w-none mt-8 prose dark:prose-invert prose-pre:p-0">
+                    <MarkdownView content={content} />
+                </div>
+            </div>
             <div onClick={() => {
                 submitPost()
             }} className="px-5 py-2 border-[3px] border-black rounded text-center cursor-pointer mx-10 dark:text-slate-100 dark:border-slate-300 font-bold">
                 Post it on the Chian Now!
             </div>
-        </div>
+        </div >
     )
 }
 
