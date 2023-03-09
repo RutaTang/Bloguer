@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Sun, Moon } from 'lucide-react'
 
 // Change between dark and light theme
+// Default: light theme
 const ThemeSwitcher = () => {
     const [isDark, setIsDark] = useState(false);
 
@@ -26,14 +27,14 @@ const ThemeSwitcher = () => {
     };
 
     return (
-        <div className="cursor-pointer select-none" onClick={() => {
+        <button className="cursor-pointer select-none" onClick={() => {
             toggleDark();
         }}>
             {
                 isDark ? <Moon strokeWidth={3} size={25} className="dark:text-slate-400" /> :
                     <Sun strokeWidth={3} size={25} />
             }
-        </div>
+        </button>
     );
 }
 

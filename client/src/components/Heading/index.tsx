@@ -1,8 +1,8 @@
 import { useWallet } from "@aptos-labs/wallet-adapter-react"
 import { Edit } from "lucide-react"
 import { Link } from "react-router-dom"
-import ThemeSwitcher from "./ThemeSwitcher"
-import Wallet from "./Wallet"
+import ThemeSwitcher from "../ThemeSwitcher"
+import Wallet from "../Wallet"
 
 const Heading = () => {
     const { account } = useWallet()
