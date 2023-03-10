@@ -2,15 +2,20 @@
 
 Your next Web3/On-Chain Blog without any servers. The frontend part can be directly put on IPFS and the backend part is obviously on chain so that you do not need to manage any servers and your data is belongs to your account.
 
-## RoadMap
-- [ ] Buy me a coffe: visitors are able to sponsor the author by transferring a number of APTs to the author
-- [ ] SEO: I have little experience on it. If someone can help, I would really appreciate it.
-- [ ] i18n
 
 ## Showcases (Light/Dark)
 
 ![showcase-home-light](./art/showcase-home-light.png)
 ![showcase-home-dark](./art/showcase-home-dark.png)
+
+## How to use it (Automatically)
+
+**Note**: Make sure you have [npm](https://www.npmjs.com/), [Aptos CLI](https://github.com/aptos-labs/aptos-core/releases?q=cli&expanded=true), [python3](https://www.python.org/) installed. This should works well in Mac or Linux. If you use Windows, check the *how to use it (manually)*.
+
+1. Download `autodeploy` folder from `tools/autodeploy` (you can also clone this project and cd into `tools/autodeploy`)
+2. Install python dependences: `pip3 install -r requirments.txt`
+3. Run autodeploy script: `python3 main.py`
+4. Just follow the instruction, Done!
 
 ## How to use it (Manually)
 
@@ -41,7 +46,4 @@ The deploy step are separated to two steps, (1) backend deployment: publish modu
 5. Upload the `dist` folder to IPFS
 6. Frontend Deployment Done~
 
-## How to use it (Automatically)
-
-TODO...
 
