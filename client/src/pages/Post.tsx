@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { Coffee, HardHat, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import * as jdenticon from "jdenticon";
@@ -30,11 +30,14 @@ const Post = () => {
     const [comment, setComment] = useState("")
     const [refreshCount, setRefreshCount] = useState(0)
     const [coffeePriceIndex, setCoffeePriceIndex] = useState(2)
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (!uuid) return
         fetchPostByUUID(uuid).then((post) => {
             setPost(post[0] as PostType)
+        }).catch((e) => {
+            navigate('/404')
         })
     }, [uuid, refreshCount])
 

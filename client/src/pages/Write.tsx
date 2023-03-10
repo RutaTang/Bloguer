@@ -1,7 +1,7 @@
 import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { AptosClient } from 'aptos'
-import { useContext, useRef, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useContext, useState } from "react";
+import { useNavigate, } from 'react-router-dom';
 import { createCreatePostPayload } from "../apis/post";
 import MarkdownView from '../components/MarkdownView';
 import { DataContext } from '../contexts/DataContex';

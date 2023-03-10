@@ -13,6 +13,7 @@ import { PetraWallet } from 'petra-plugin-wallet-adapter';
 import React from 'react';
 import Write from './pages/Write';
 import { DataContextProvider } from './contexts/DataContex';
+import NotFound from './pages/NotFound';
 
 const wallets = [new PetraWallet()];
 
@@ -20,7 +21,7 @@ const router = createHashRouter([
     {
         path: "/",
         element: <App />,
-        errorElement: <div>404</div>,
+        errorElement: <NotFound />,
         children: [
             {
                 index: true,
