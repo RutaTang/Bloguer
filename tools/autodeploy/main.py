@@ -8,7 +8,22 @@ import dotenv
 # Constants
 FOLDER_NAME = 'Bloguer'
 
+# reusable global variables
 account = None
+rest_url = None # node url
+faucet_url = None
+
+def ask_user_input_global_variables():
+    global account
+    global rest_url
+    global faucet_url
+    if account is None:
+        account = input("Please input your account: ")
+    if rest_url is None:
+        rest_url = input("Please input your node url: ")
+    if faucet_url is None:
+        faucet_url = input("Please input your faucet url: ")
+
 
 def clone_project():
     # Clone bloguer repo
@@ -19,11 +34,9 @@ def clone_project():
 def deploy_backend():
     print("===Deploying backend...===")
     # Get private_key, public_key 
-    global account
-    if account is None:
-        account = input("Please input your account: ")
     public_key = input("Please input your public_key: ")
     private_key = input("Please input your private_key: ")
+
     # Change private_key, publick_key, account in '{folder}/move/.aptos/config.yaml'
     data = None
     with open(f'{FOLDER_NAME}/move/.aptos/config.yaml', 'r',encoding='utf-8') as f:
@@ -33,6 +46,8 @@ def deploy_backend():
         default['private_key'] = private_key
         default['public_key'] = public_key
         default['account'] = account
+        default['rest_url'] = rest_url
+        default['faucet_url'] = faucet_url
 
     with open(f'{FOLDER_NAME}/move/.aptos/config.yaml', 'w',encoding='utf-8') as f:
         yaml.dump(data,f)
@@ -60,10 +75,8 @@ def deploy_frontend():
     dotenv_path = f'{FOLDER_NAME}/client/.env'
 
     # Aptos info
-    global account
-    if account is None:
-        account = input("Please input your account: ")
     dotenv.set_key(dotenv_path, "VITE_APTOS_MODULE_ADDRESS", account)
+    dotenv.set_key(dotenv_path, "VITE_APTOS_NODE_URL", rest_url)
 
     # Basic user info
     author_name = input("Please input your author name: ")
@@ -105,6 +118,8 @@ if __name__ == '__main__':
     print("Cloning project...")
     clone_project()
     print("Successfully clone project...")
+
+    ask_user_input_global_variables()
 
     if deploy_mode == 'backend':
         deploy_backend()
