@@ -42,7 +42,7 @@ The deploy step are separated to two steps, (1) backend deployment: publish modu
 1. Make sure you are in the project path
 2. `cd client`
 3. Find `.env` and change all the information there based on your case
-4. Run `npm build` and it will generate bundled one in the `dist` folder
+4. Run `npm install && npm build` and it will generate bundled one in the `dist` folder
 5. Upload the `dist` folder to IPFS
 6. Frontend Deployment Done~
 
