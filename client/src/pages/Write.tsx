@@ -2,7 +2,7 @@ import { useWallet } from '@aptos-labs/wallet-adapter-react'
 import { AptosClient } from 'aptos'
 import { useContext, useRef, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { createPostPayload } from "../apis/post";
+import { createCreatePostPayload } from "../apis/post";
 import MarkdownView from '../components/MarkdownView';
 import { DataContext } from '../contexts/DataContex';
 
@@ -20,7 +20,7 @@ const Write = () => {
     const submitPost = async () => {
         if (!account) return
         const client = new AptosClient(import.meta.env.VITE_APTOS_NODE_URL)
-        const payload = createPostPayload({
+        const payload = createCreatePostPayload({
             title, description, content, read_duration: readDuration
         })
         try {
@@ -67,7 +67,7 @@ const Write = () => {
             </div>
             <textarea hidden={isPreview} onChange={(e) => {
                 setContent(e.target.value)
-            }} suppressHydrationWarning contentEditable={true} className="w-full outline-none grow h-96 border-[2px] dark:border-[5px] rounded border-black px-5 py-3 resize-none bg-transparent dark:border-slate-300 dark:text-slate-100 overflow-scroll">
+            }} suppressHydrationWarning className="w-full outline-none grow h-96 border-[2px] dark:border-[5px] rounded border-black px-5 py-3 resize-none bg-transparent dark:border-slate-300 dark:text-slate-100 overflow-scroll">
             </textarea>
             <div hidden={!isPreview} className="w-full outline-none grow h-full border-[2px] dark:border-[5px] rounded border-black px-5 py-3 resize-none bg-transparent dark:border-slate-300 dark:text-slate-100 overflow-scroll">
                 <div className="max-w-none mt-8 prose dark:prose-invert prose-pre:p-0">

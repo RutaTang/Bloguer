@@ -64,7 +64,7 @@ const fetchPostByUUID = async (uuid: string) => {
     }
 }
 
-const createPostPayload = ({
+const createCreatePostPayload = ({
     title, description, content, read_duration
 }: {
 
@@ -89,7 +89,7 @@ const createPostPayload = ({
     return payload
 }
 
-const updatePostPayload = ({
+const createUpdatePostPayload = ({
     uuid, title, description, content, read_duration
 }: {
     uuid: string, title: string, description: string, content: string, read_duration: number
@@ -112,7 +112,7 @@ const updatePostPayload = ({
     return payload
 }
 
-const deletePostPayload = ({ uuid }: {
+const createDeletePostPayload = ({ uuid }: {
     uuid: string
 }) => {
     const moduleAddress = import.meta.env.VITE_APTOS_MODULE_ADDRESS
@@ -130,6 +130,4 @@ const deletePostPayload = ({ uuid }: {
 
 
 
-
-
-export { fetchPosts, createPostPayload, updatePostPayload, deletePostPayload, fetchPostsListByStartAndEndIndex, fetchPostsLength, fetchPostByUUID }
+export { fetchPosts, createCreatePostPayload, createUpdatePostPayload, createDeletePostPayload, fetchPostsListByStartAndEndIndex, fetchPostsLength, fetchPostByUUID }

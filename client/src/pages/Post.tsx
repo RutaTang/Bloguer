@@ -2,12 +2,13 @@ import { useParams } from "react-router-dom"
 import { Coffee, HardHat, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import * as jdenticon from "jdenticon";
+import { Helmet } from "react-helmet";
 
 import { PostType } from "../types";
 import { timeStampToLocalDateString } from "../utils";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { AptosAccount, AptosClient, CoinClient } from "aptos";
-import { commentOnAPostPayload } from "../apis/comment";
+import { createCommentOnAPostPayload } from "../apis/comment";
 import { fetchPostByUUID } from "../apis/post";
 
 
@@ -69,7 +70,7 @@ const Post = () => {
         if (!account) return
         if (!post) return
         const client = new AptosClient(import.meta.env.VITE_APTOS_NODE_URL)
-        const payload = commentOnAPostPayload({
+        const payload = createCommentOnAPostPayload({
             postId: post.uuid,
             content: comment,
         })
@@ -86,6 +87,11 @@ const Post = () => {
         ?
         (
             <div>
+                {/* Meta/Head Info */}
+                <Helmet>
+                    <title>{post.title}</title>
+                    <meta name="description" content={post.description} />
+                </Helmet>
                 {/* Post Info */}
                 <div className="mt-10">
                     <h1 className="text-3xl font-black dark:text-slate-100">
@@ -111,7 +117,7 @@ const Post = () => {
                     <div className="flex flex-wrap items-center justify-start space-x-5 mt-5">
                         {
                             post.sponsors && post.sponsors.length > 0 ?
-                                post.sponsors.sort((a,b)=>{
+                                post.sponsors.sort((a, b) => {
                                     return parseInt(b.count) - parseInt(a.count)
                                 }).map((sponsor) => {
                                     return (

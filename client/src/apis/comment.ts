@@ -1,4 +1,4 @@
-export const commentOnAPostPayload = ({ postId, content }: {
+export const createCommentOnAPostPayload = ({ postId, content }: {
     postId: string, content: string
 }) => {
     const moduleAddress = import.meta.env.VITE_APTOS_MODULE_ADDRESS

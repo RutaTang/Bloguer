@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { DataContext } from '../contexts/DataContex';
 import { PostType } from '../types';
 import { timeStampToLocalDateString } from '../utils';
+import { Helmet } from 'react-helmet'
 
 
 const Home = () => {
@@ -22,6 +23,11 @@ const Home = () => {
     }
     return (
         <div>
+            {/* Meta Info */}
+            <Helmet>
+                <title>{author.name}</title>
+                <meta name="description" content={author.introduction} />
+            </Helmet>
             {/* Author information */}
             <div className="flex mt-10">
                 <div className="shrink-0">
