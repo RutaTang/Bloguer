@@ -5,8 +5,9 @@ module bloguer_address::bloguer{
     use aptos_std::vector;
     use std::string;
     use aptos_framework::aptos_account::transfer;
-    #[test_only]
+    use aptos_framework::event;
     use aptos_framework::account;
+
     #[test_only]
     use aptos_framework::coin;
     #[test_only]
@@ -17,6 +18,12 @@ module bloguer_address::bloguer{
 
     struct PostStore has key {
         posts: vector<Post>,
+        // events
+        create_post_event_handle: event::EventHandle<Post>,
+        delete_post_event_handle: event::EventHandle<Post>,
+        update_post_event_handle: event::EventHandle<Post>,
+        sponsor_post_event_handle: event::EventHandle<Post>,
+        comment_post_event_handle: event::EventHandle<Post>,
     }
 
     struct Post has store, drop, copy {
@@ -48,6 +55,11 @@ module bloguer_address::bloguer{
         // init and move the post store to the account
         let post_store = PostStore {
             posts: vector::empty<Post>(), 
+            create_post_event_handle: account::new_event_handle<Post>(account),
+            delete_post_event_handle: account::new_event_handle<Post>(account),
+            update_post_event_handle: account::new_event_handle<Post>(account),
+            sponsor_post_event_handle: account::new_event_handle<Post>(account),
+            comment_post_event_handle: account::new_event_handle<Post>(account),
         };
         move_to(account, post_store);
     }
@@ -136,6 +148,8 @@ module bloguer_address::bloguer{
             sponsors: vector::empty<Sponsor>(),
         };
         vector::push_back(&mut post_store.posts, post);
+        // emit post created event
+        event::emit_event(&mut post_store.create_post_event_handle, post);
     }
 
     public entry fun delete_post(account: &signer, uuid: String) acquires PostStore {
@@ -154,8 +168,12 @@ module bloguer_address::bloguer{
         };
         //assert if post not found
         assert!(index < len, POST_NOT_FOUND);
+        //get post
+        let post = *vector::borrow(&post_store.posts, index);
         //remove the post
         vector::remove(&mut post_store.posts, index);
+        //emit post deleted event
+        event::emit_event(&mut post_store.delete_post_event_handle, post);
     }
 
     public entry fun update_post(account: &signer, uuid: String, title: String, description: String, content: String, update_date: u64, read_duration: u64) acquires PostStore {
@@ -181,6 +199,8 @@ module bloguer_address::bloguer{
         post.content = content;
         post.update_date = update_date;
         post.read_duration = read_duration;
+        //emit post updated event
+        event::emit_event(&mut post_store.update_post_event_handle, *post);
     }
 
     public entry fun comment_on_a_post(account: &signer, post_uuid: String, comment_uuid: String, content: String, comment_date: u64) acquires PostStore {
@@ -208,8 +228,11 @@ module bloguer_address::bloguer{
             content: content,
         };
         vector::push_back(&mut post.comments, comment);
+        //emit comment on post event
+        event::emit_event(&mut post_store.comment_post_event_handle, *post);
     }
 
+    // sponsor a post
     public entry fun buy_me_a_coffee(account: &signer, post_uuid: String, sponser_count: u64, sponsor_date: u64) acquires PostStore {
         //get address of the account
         let signer_address = signer::address_of(account); 
@@ -236,6 +259,8 @@ module bloguer_address::bloguer{
             count: sponser_count,
         };
         vector::push_back(&mut post.sponsors, sponsor);
+        //emit sponsor event
+        event::emit_event(&mut post_store.sponsor_post_event_handle, *post);
     }
 
 
