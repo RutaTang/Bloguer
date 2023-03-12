@@ -12,6 +12,8 @@ module bloguer_address::bloguer{
     #[test_only]
     use aptos_framework::aptos_coin::AptosCoin;
 
+    const POST_NOT_FOUND: u64 = 0;
+    const INDEX_OUT_OF_RANGE: u64 = 1;
 
     struct PostStore has key {
         posts: vector<Post>,
@@ -56,8 +58,6 @@ module bloguer_address::bloguer{
         let post_store = borrow_global_mut<PostStore>(module_address);
         //find the post index
         let len = vector::length(&post_store.posts);
-        //assert if posts is empty
-        assert!(len > 0, 0);
         //find the post index
         let index = 0; 
         while (index < len) {
@@ -66,7 +66,7 @@ module bloguer_address::bloguer{
             index = index + 1;
         };
         //assert if post not found
-        assert!(index < len, 0);
+        assert!(index < len, POST_NOT_FOUND);
         //return the post
         let post = vector::borrow(&post_store.posts, index);
         return *post
@@ -90,11 +90,11 @@ module bloguer_address::bloguer{
         //find the post index
         let len = vector::length(&post_store.posts);
         //asserts
-        assert!(start_index < end_index, 0);
-        assert!(start_index < len, 0);
-        assert!(end_index <= len, 0);
-        assert!(start_index >= 0, 0);
-        assert!(end_index >= 0, 0);
+        assert!(start_index < end_index, INDEX_OUT_OF_RANGE);
+        assert!(start_index < len, INDEX_OUT_OF_RANGE);
+        assert!(end_index <= len, INDEX_OUT_OF_RANGE);
+        assert!(start_index >= 0, INDEX_OUT_OF_RANGE);
+        assert!(end_index >= 0, INDEX_OUT_OF_RANGE);
         //return empty vector if posts is empty
         if (len == 0) return vector::empty<Post>();
         // get posts
@@ -145,8 +145,6 @@ module bloguer_address::bloguer{
         let post_store = borrow_global_mut<PostStore>(signer_address);
         //find the post index
         let len = vector::length(&post_store.posts);
-        //assert if posts is empty
-        assert!(len > 0, 0);
         //find the post index
         let index = 0; 
         while (index < len) {
@@ -155,7 +153,7 @@ module bloguer_address::bloguer{
             index = index + 1;
         };
         //assert if post not found
-        assert!(index < len, 0);
+        assert!(index < len, POST_NOT_FOUND);
         //remove the post
         vector::remove(&mut post_store.posts, index);
     }
@@ -167,8 +165,6 @@ module bloguer_address::bloguer{
         let post_store = borrow_global_mut<PostStore>(signer_address);
         //find the post index
         let len = vector::length(&post_store.posts);
-        //assert if posts is empty
-        assert!(len > 0, 0);
         //find the post index
         let index = 0; 
         while (index < len) {
@@ -177,7 +173,7 @@ module bloguer_address::bloguer{
             index = index + 1;
         };
         //assert if post not found
-        assert!(index < len, 0);
+        assert!(index < len, POST_NOT_FOUND);
         //update the post
         let post = vector::borrow_mut(&mut post_store.posts, index);
         post.title = title;
@@ -194,8 +190,6 @@ module bloguer_address::bloguer{
         let post_store = borrow_global_mut<PostStore>(signer_address);
         //find the post index
         let len = vector::length(&post_store.posts);
-        //assert if posts is empty
-        assert!(len > 0, 0);
         //find the post index
         let index = 0; 
         while (index < len) {
@@ -204,7 +198,7 @@ module bloguer_address::bloguer{
             index = index + 1;
         };
         //assert if post not found
-        assert!(index < len, 0);
+        assert!(index < len, POST_NOT_FOUND);
         //comment on the post
         let post = vector::borrow_mut(&mut post_store.posts, index);
         let comment = Comment {
@@ -223,8 +217,6 @@ module bloguer_address::bloguer{
         let post_store = borrow_global_mut<PostStore>(@bloguer_address);
         //find the post index
         let len = vector::length(&post_store.posts);
-        //assert if posts is empty
-        assert!(len > 0, 0);
         //find the post index
         let index = 0; 
         while (index < len) {
@@ -233,7 +225,7 @@ module bloguer_address::bloguer{
             index = index + 1;
         };
         //assert if post not found
-        assert!(index < len, 0);
+        assert!(index < len, POST_NOT_FOUND);
         //transfer the coin to @bloguer_address
         transfer(account, @bloguer_address, sponser_count); 
         //push to sponsors vec
