@@ -34,7 +34,7 @@ const Home = () => {
                     <img src={author.avatar} alt="" className="rounded-full w-20 h-20" />
                 </div>
                 <div className="ml-6 space-y-3">
-                    <h1 className="text-xl font-bold dark:text-slate-100">{author.name}</h1>
+                    <h1 className="text-2xl font-bold dark:text-slate-100">{author.name}</h1>
                     <p className="text-sm dark:text-slate-100">{author.introduction}</p>
                     <div className="text-base dark:text-slate-100 flex">
                         <p className="shrink-0">

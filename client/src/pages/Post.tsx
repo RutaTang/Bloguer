@@ -129,7 +129,7 @@ const Post = () => {
                     <p className="text-base dark:text-slate-300">
                         Pub At {timeStampToLocalDateString(parseInt(post.publish_date))} • Upd At {timeStampToLocalDateString(parseInt(post.update_date))} • {post.read_duration} min
                     </p>
-                    <p className="text-gray-400 flex space-x-3 items-center">
+                    <p className="dark:text-gray-400 text-gray-500 flex space-x-3 items-center">
                         <button onClick={() => {
                             editPost()
                         }}>
