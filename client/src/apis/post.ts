@@ -129,5 +129,4 @@ const createDeletePostPayload = ({ uuid }: {
 
 
 
-
 export { fetchPosts, createCreatePostPayload, createUpdatePostPayload, createDeletePostPayload, fetchPostsListByStartAndEndIndex, fetchPostsLength, fetchPostByUUID }

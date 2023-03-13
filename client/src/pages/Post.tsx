@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom"
-import { Coffee, HardHat, Send } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { Coffee, Edit, HardHat, Send, Trash } from "lucide-react";
+import { useContext, useEffect, useRef, useState } from "react";
 import * as jdenticon from "jdenticon";
 import { Helmet } from "react-helmet";
 
@@ -9,12 +9,13 @@ import { timeStampToLocalDateString } from "../utils";
 import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { AptosAccount, AptosClient, CoinClient } from "aptos";
 import { createCommentOnAPostPayload } from "../apis/comment";
-import { fetchPostByUUID } from "../apis/post";
+import { createDeletePostPayload, fetchPostByUUID } from "../apis/post";
 
 
 import { Tooltip } from 'react-tooltip'
 import 'react-tooltip/dist/react-tooltip.css'
 import MarkdownView from "../components/MarkdownView";
+import { DataContext } from "../contexts/DataContex";
 
 
 const COFFEE_PRICE = [
@@ -29,6 +30,7 @@ const Post = () => {
     const [post, setPost] = useState<PostType>()
     const [comment, setComment] = useState("")
     const [refreshCount, setRefreshCount] = useState(0)
+    const { refreshPosts } = useContext(DataContext)
     const [coffeePriceIndex, setCoffeePriceIndex] = useState(2)
     const navigate = useNavigate()
 
@@ -86,6 +88,27 @@ const Post = () => {
             console.error(e)
         }
     }
+    const deletePost = async () => {
+        if (!account) return
+        if (!post) return
+        const client = new AptosClient(import.meta.env.VITE_APTOS_NODE_URL)
+        const payload = createDeletePostPayload({ uuid: post.uuid })
+        try {
+            const response = await signAndSubmitTransaction(payload)
+            await client.waitForTransaction(response.hash)
+            refreshPosts()
+            navigate('/')
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const editPost = async () => {
+        if (!account) return
+        if (!post) return
+        navigate(`/write/${post.uuid}`)
+    }
+
     return post
         ?
         (
@@ -96,15 +119,27 @@ const Post = () => {
                     <meta name="description" content={post.description} />
                 </Helmet>
                 {/* Post Info */}
-                <div className="mt-10">
+                <div className="mt-10 space-y-2">
                     <h1 className="text-3xl font-black dark:text-slate-100">
                         {
                             !post.title ? "No title" : post.title
                         }
                     </h1>
-                    <p className="text-xl font-bold opacity-70 mt-2 dark:text-slate-300">By Ruta Tang</p>
-                    <p className="text-base mt-2 dark:text-slate-300">
+                    <p className="text-xl font-bold opacity-70 dark:text-slate-300">By Ruta Tang</p>
+                    <p className="text-base dark:text-slate-300">
                         Pub At {timeStampToLocalDateString(parseInt(post.publish_date))} • Upd At {timeStampToLocalDateString(parseInt(post.update_date))} • {post.read_duration} min
+                    </p>
+                    <p className="text-gray-400 flex space-x-3 items-center">
+                        <button onClick={() => {
+                            editPost()
+                        }}>
+                            <Edit strokeWidth={2} size={22} />
+                        </button>
+                        <button onClick={() => {
+                            deletePost()
+                        }}>
+                            <Trash strokeWidth={2} size={22} />
+                        </button>
                     </p>
                 </div>
                 <hr className="mt-5" />

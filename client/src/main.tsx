@@ -33,8 +33,17 @@ const router = createHashRouter([
             },
             {
                 path: "write",
-                element: <Write />,
-            }
+                children: [
+                    {
+                        index: true,
+                        element: <Write />,
+                    },
+                    {
+                        path: ":uuid",
+                        element: <Write />,
+                    }
+                ]
+            },
         ]
     },
 ]);
